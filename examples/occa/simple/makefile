@@ -10,6 +10,8 @@ sources = $(wildcard $(sPath)/*.cpp)
 
 objects  = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o))
 
+compilerFlags += -g
+
 executables: simple 
 
 simple: $(objects) $(headers) simple.cpp
