@@ -11,19 +11,23 @@ int main(int argc, char **argv){
   int dev = 0;
 
   occa::device device;
-  device.setup("OpenCL", plat, dev);
+  device.setup("OpenMP", plat, dev);
 
   // build jacobi kernel from source file
   const char *functionName = "";
 
+  // arg
+  occa::kernelInfo args;
+  args.addCompilerFlag("-g");
+
   // build Jacobi kernel
-  occa::kernel simple = device.buildKernelFromSource("simple.occa", "simple");
+  occa::kernel simple = device.buildKernelFromSource("simple.occa", "simple", args);
 
   // size of array
-  int N = 256;
+  int N = 20;
 
   // set thread array for Jacobi iteration
-  int T = 32;
+  int T = 5;
   int dims = 1;
   occa::dim inner(T);
   occa::dim outer((N+T-1)/T);
