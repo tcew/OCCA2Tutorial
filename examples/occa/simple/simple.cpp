@@ -8,17 +8,17 @@ int main(int argc, char **argv){
 
   /* hard code platform and device number */
   int plat = 0;
-  int dev = 0;
+  int dev = 2;
 
   occa::device device;
-  device.setup("OpenMP", plat, dev);
+  device.setup("OpenCL", plat, dev);
 
   // build jacobi kernel from source file
   const char *functionName = "";
 
   // arg
-  occa::kernelInfo args;
-  args.addCompilerFlag("-g");
+  //  occa::kernelInfo args;
+  //  args.addCompilerFlag("-g");
 
   // build Jacobi kernel
   occa::kernel simple = device.buildKernelFromSource("simple.occa", "simple", args);
