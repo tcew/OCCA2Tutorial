@@ -1,0 +1,60 @@
+// need some comments
+occaKernel void render(occaKernelInfoArg,
+		       occaPointer int *iterationCount) {
+
+  // loop over work-groups
+  occaOuterFor1 {
+    occaOuterFor0 {
+      
+      // loop over tasks for work-group
+      occaInnerFor1 {
+	occaInnerFor0 {
+	  
+	  //unsigned int x_dim = blockIdx.x*blockDim.x + threadIdx.x;
+	  unsigned int x_dim = occaGlobalId0;
+	  
+	  //unsigned int y_dim = blockIdx.y*blockDim.y + threadIdx.y;
+	  unsigned int y_dim = occaGlobalId1;
+
+	  // pixel index (linear 3*char array)
+	  int index = width*y_dim + x_dim;
+	  
+	  //Cleve Moler example, set rectangle dimensions
+	  const double centRe = -0.748766713922161;
+	  const double centIm = 0.123640844894862;
+	  const double diam  = 0.151579;
+	  
+	  //Maximum and minimum values on real axis
+	  const double remin = centRe - 0.5*diam;
+	  const double remax = centRe + 0.5*diam;
+	  
+	  //Maximum and minimum values on imaginary axis
+	  const double immin = centIm - 0.5*diam;
+	  const double immax = centIm + 0.5*diam;
+	  
+	  //Divide rectangle into number of pixels
+	  const double delta_Re = (remax-remin)/(width-1.0);
+	  const double delta_Im = (immax-immin)/(height-1.0);
+
+	  //Define z0 for iteration z_{n+1} = (z_n)^2 + z0
+	  double Re_z0 = remin + delta_Re*x_dim;
+	  double Im_z0 = immin + delta_Im*y_dim;
+	  
+	  double Re_z = 0.0;
+	  double Im_z = 0.0;
+	  int iteration = 0;
+	  int max_iteration = 6400;
+	  while( (Re_z*Re_z + Im_z*Im_z <= 4.0) && (iteration < max_iteration) ) {
+	    double Im_z_old = Re_z*Re_z - Im_z*Im_z + Re_z0;
+	    Im_z            = 2.0*Re_z*Im_z + Im_z0;
+	    Re_z            = Im_z_old;
+	    iteration++;
+	  }
+
+	  // write out number of iterations
+	  iterationCount[index] = iteration;
+	}
+      }
+    }
+  }
+}
